@@ -102,9 +102,17 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{ include "kcp.imagePullSecrets" . | trim | nindent 6 }}
+      {{- end }}
       containers:
         - name: kcp
+          {{- if .Values.global.imageRegistry }}
+          image:  {{ .Values.global.imageRegistry }}/{{ join "/" (slice (split "/" .Values.kcp.image ) 1) }}:{{- include "kcp.version" . }}
+          {{- else }}
           image: {{ .Values.kcp.image }}:{{- include "kcp.version" . }}
+          {{- end }}
           imagePullPolicy: {{ .Values.kcp.pullPolicy }}
           securityContext:
             readOnlyRootFilesystem: true
@@ -113,7 +121,7 @@ spec:
             {{- if .Values.kcp.profiling.enabled }}
             - containerPort: {{ .Values.kcp.profiling.port }}
               name: profiler
-            {{- end}}
+            {{- end }}
           command: ["/kcp", "start"]
           args:
             {{- if .Values.kcp.etcd.serverAddress }}

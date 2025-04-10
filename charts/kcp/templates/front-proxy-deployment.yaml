@@ -62,9 +62,17 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{ include "kcp.imagePullSecrets" . | trim | nindent 6 }}
+      {{- end }}
       containers:
         - name: kcp-front-proxy
-          image: "{{ .Values.kcpFrontProxy.image }}:{{- include "frontproxy.version" . }}"
+          {{- if .Values.global.imageRegistry }}
+          image:  {{ .Values.global.imageRegistry }}/{{ join "/" (slice (split "/" .Values.kcpFrontProxy.image ) 1) }}:{{- include "frontproxy.version" . }}
+          {{- else }}
+          image: {{ .Values.kcpFrontProxy.image }}:{{- include "frontproxy.version" . }}
+          {{- end }}
           imagePullPolicy: {{ .Values.kcpFrontProxy.pullPolicy }}
           command: ["/kcp-front-proxy"]
           args:

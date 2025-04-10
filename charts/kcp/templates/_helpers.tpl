@@ -27,6 +27,16 @@ v{{- .Chart.AppVersion -}}
 {{- end -}}
 {{- end -}}
 
+{{- define "kcp.imagePullSecrets" -}}
+{{- range .Values.global.imagePullSecrets }}
+  {{- if eq (typeOf .) "map[string]interface {}" }}
+- {{ toYaml . | trim }}
+  {{- else }}
+- name: {{ . }}
+  {{- end }}
+{{- end }}
+{{- end -}}
+
 {{- define "kcp.batteries" -}}
 {{- $batteries := .Values.kcp.batteries -}}
 {{- if .Values.kcp.monitoring.serviceMonitor.enabled -}}
