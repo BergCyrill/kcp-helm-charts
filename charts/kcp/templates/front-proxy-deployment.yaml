@@ -69,7 +69,7 @@ spec:
       containers:
         - name: kcp-front-proxy
           {{- if .Values.global.imageRegistry }}
-          image:  {{ .Values.global.imageRegistry }}/{{ join "/" (slice (split "/" .Values.kcpFrontProxy.image ) 1) }}:{{- include "frontproxy.version" . }}
+          image:  {{ .Values.global.imageRegistry }}/{{ regexReplaceAll ".*?/(.*)" .Values.kcpFrontProxy.image "${1}" }}:{{- include "frontproxy.version" . }}
           {{- else }}
           image: {{ .Values.kcpFrontProxy.image }}:{{- include "frontproxy.version" . }}
           {{- end }}

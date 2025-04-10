@@ -51,7 +51,7 @@ spec:
       containers:
         - name: etcd
           {{- if .Values.global.imageRegistry }}
-          image:  {{ .Values.global.imageRegistry }}/{{ join "/" (slice (split "/" .Values.etcd.image ) 1) }}:{{ .Values.etcd.tag }}
+          image:  {{ .Values.global.imageRegistry }}/{{ regexReplaceAll ".*?/(.*)" .Values.etcd.image "${1}" }}:{{ .Values.etcd.tag }}
           {{- else }}
           image: {{ .Values.etcd.image }}:{{ .Values.etcd.tag }}
           {{- end }}

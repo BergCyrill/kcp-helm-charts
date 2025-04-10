@@ -109,7 +109,7 @@ spec:
       containers:
         - name: kcp
           {{- if .Values.global.imageRegistry }}
-          image:  {{ .Values.global.imageRegistry }}/{{ join "/" (slice (split "/" .Values.kcp.image ) 1) }}:{{- include "kcp.version" . }}
+          image:  {{ .Values.global.imageRegistry }}/{{ regexReplaceAll ".*?/(.*)" .Values.kcp.image "${1}" }}:{{- include "kcp.version" . }}
           {{- else }}
           image: {{ .Values.kcp.image }}:{{- include "kcp.version" . }}
           {{- end }}
